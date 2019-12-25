@@ -22,6 +22,8 @@ import java.util.Map;
 
 public class CustomTest {
     private static final String SUBMIT_URL = "http://localhost:9000/test/submit";
+    private static final String READ_URL = "http://localhost:9000/test/read";
+    private static final String HASH_URL = "http://localhost:9000/test/hash";
 
     private static final int TEST_NUM = 1000;
     private static final String READ_STATEMENT = "SELECT * FROM person";
@@ -31,6 +33,8 @@ public class CustomTest {
 
     @Test
     public void writingTest() throws IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+
         HttpPost post = new HttpPost(SUBMIT_URL);
         List<NameValuePair> urlParameters = new ArrayList<>();
         urlParameters.add(new BasicNameValuePair("statement", WRITE_STATEMENT));
@@ -38,8 +42,7 @@ public class CustomTest {
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < TEST_NUM; i++) {
-            try (CloseableHttpClient httpClient = HttpClients.createDefault();
-                 CloseableHttpResponse response = httpClient.execute(post)) {
+            try (CloseableHttpResponse response = httpClient.execute(post)) {
                 int entity = Integer.parseInt(EntityUtils.toString(response.getEntity()));
                 assert entity == 200;
             }
@@ -52,15 +55,24 @@ public class CustomTest {
 
     @Test
     public void readingTest() throws IOException {
-        HttpPost post = new HttpPost(SUBMIT_URL);
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+
+        HttpPost hashPost = new HttpPost(HASH_URL);
+
+        HttpPost post = new HttpPost(READ_URL);
         List<NameValuePair> urlParameters = new ArrayList<>();
         urlParameters.add(new BasicNameValuePair("statement", READ_STATEMENT));
         post.setEntity(new UrlEncodedFormEntity(urlParameters));
 
         long start = System.currentTimeMillis();
+        for (int i = 0; i < 5; i++) {
+            try (CloseableHttpResponse response = httpClient.execute(hashPost)) {
+                int entity = Integer.parseInt(EntityUtils.toString(response.getEntity()));
+                assert entity == 200;
+            }
+        }
         for (int i = 0; i < TEST_NUM; i++) {
-            try (CloseableHttpClient httpClient = HttpClients.createDefault();
-                 CloseableHttpResponse response = httpClient.execute(post)) {
+            try (CloseableHttpResponse response = httpClient.execute(post)) {
                 int entity = Integer.parseInt(EntityUtils.toString(response.getEntity()));
                 assert entity == 200;
             }

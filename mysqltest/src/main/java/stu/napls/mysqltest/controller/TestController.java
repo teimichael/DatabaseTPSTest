@@ -13,6 +13,11 @@ public class TestController {
     private static final String USER = "root";
     private static final String PASS = "";
 
+    @PostMapping("/hash")
+    public Integer hash() {
+        return 200;
+    }
+
     @PostMapping("/write")
     public Integer write(String statement) {
         MySQLConnector mySQLConnector = new MySQLConnector(DB_URL, USER, PASS);

@@ -26,6 +26,8 @@ public class MySQLTest {
 
     @Test
     public void writingTest() throws IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+
         HttpPost post = new HttpPost(WRITE_URL);
         List<NameValuePair> urlParameters = new ArrayList<>();
         urlParameters.add(new BasicNameValuePair("statement", WRITE_STATEMENT));
@@ -33,8 +35,7 @@ public class MySQLTest {
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < TEST_NUM; i++) {
-            try (CloseableHttpClient httpClient = HttpClients.createDefault();
-                 CloseableHttpResponse response = httpClient.execute(post)) {
+            try (CloseableHttpResponse response = httpClient.execute(post)) {
                 int entity = Integer.parseInt(EntityUtils.toString(response.getEntity()));
                 assert entity == 200;
             }
@@ -46,6 +47,8 @@ public class MySQLTest {
 
     @Test
     public void readingTest() throws IOException{
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+
         HttpPost post = new HttpPost(READ_URL);
         List<NameValuePair> urlParameters = new ArrayList<>();
         urlParameters.add(new BasicNameValuePair("statement", READ_STATEMENT));
@@ -53,8 +56,7 @@ public class MySQLTest {
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < TEST_NUM; i++) {
-            try (CloseableHttpClient httpClient = HttpClients.createDefault();
-                 CloseableHttpResponse response = httpClient.execute(post)) {
+            try (CloseableHttpResponse response = httpClient.execute(post)) {
                 int entity = Integer.parseInt(EntityUtils.toString(response.getEntity()));
                 assert entity == 200;
             }
