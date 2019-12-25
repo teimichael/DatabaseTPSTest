@@ -1,4 +1,4 @@
-package stu.napls;
+package stu.napls.mysqltest.util;
 
 import java.sql.*;
 
